@@ -71,7 +71,7 @@ set Time step = 8.0e-4
 
 # The simulation ends when either the number of time steps is reached or the
 # simulation time is reached.
-set Number of time steps = 150000
+set Number of time steps = 1500000  # 150000
 
 # =================================================================================
 # Set the boundary conditions
@@ -95,6 +95,22 @@ set Number of time steps = 150000
 
 set Boundary condition for variable c = NATURAL
 set Boundary condition for variable n = NATURAL
+
+# =================================================================================
+# Set the nucleation parameters
+# =================================================================================
+
+set Time steps between nucleation attempts = 30
+set Minimum allowed distance between nuclei = 20.0
+set Order parameter cutoff value = 0.01
+
+subsection Nucleation parameters: n
+    set Nucleus semiaxes (x, y, z) = 5, 5, 5
+    set Freeze zone semiaxes (x, y, z) = 7.5, 7.5, 7.5
+    set Nucleus rotation in degrees (x, y, z) = 0, 0, 0
+    set Freeze time following nucleation = 20
+    set Nucleation-free border thickness = 10
+end
 
 # =================================================================================
 # Set the model constants
@@ -122,8 +138,22 @@ set Model constant center2 = (75,75,75), TENSOR
 set Model constant radius1 = 20.0, DOUBLE
 set Model constant radius2 = 8.33333333333, DOUBLE
 
-# Initial oncentration in the matrix
+# Initial concentration in the matrix
 set Model constant matrix_concentration = 0.009, DOUBLE
+
+
+############# From the nucleation app
+
+# Constants for the free energy expressions
+set Model constant calmin = 0.0, DOUBLE
+
+# Constants k1 and k2 for nucleation rate in the bulk
+set Model constant k1 = 498.866, DOUBLE
+set Model constant k2 = 4.14465, DOUBLE
+
+# Incubation time constant
+set Model constant tau = 500.0, DOUBLE
+set Model constant epsilon = 1.0e-7, DOUBLE
 
 # =================================================================================
 # Set the output parameters

@@ -2,6 +2,8 @@
 // FUNCTION FOR INITIAL CONDITIONS
 // ===========================================================================
 
+#include <random>
+
 template <int dim, int degree>
 void customPDE<dim,degree>::setInitialCondition(const dealii::Point<dim> &p, const unsigned int index, double & scalar_IC, dealii::Vector<double> & vector_IC){
     // ---------------------------------------------------------------------
@@ -10,47 +12,24 @@ void customPDE<dim,degree>::setInitialCondition(const dealii::Point<dim> &p, con
     // Enter the function describing conditions for the fields at point "p".
     // Use "if" statements to set the initial condition for each variable
     // according to its variable index
-	  // The initial condition is two circles/spheres defined
-	  // by a hyperbolic tangent function. The center of each circle/sphere is
-	  // given by "center" and its radius is given by "rad".
 
-      double dist;
-	  scalar_IC = 0;
+    // The initial condition is a nearly homogeneous system with some gaussian
+    // noise in the composition.
 
-	  if (index == 0){
-		  scalar_IC = matrix_concentration;
-	  }
+    // Define random generator with Gaussian distribution
+    static std::default_random_engine generator(std::random_device{}());
+    static std::normal_distribution<double> dist(0.5, 0.1);
 
-      dist = 0.0;
-      for (unsigned int dir = 0; dir < dim; dir++){
-          dist += (p[dir]-center1[dir])*(p[dir]-center1[dir]);
-      }
-      dist = std::sqrt(dist);
+    if (index == 0){
+        scalar_IC = dist(generator);  // 0.5 + dist(generator)
+        scalar_IC = std::max(0.0, std::min(1.0, scalar_IC));
+    }
+    else {
+        scalar_IC = 0.0;
+    }
 
-      // Initial condition for the concentration field
-      if (index == 0){
-          scalar_IC += 0.5*(0.125)*(1.0-std::tanh((dist-radius1)/(1.0)));
-      }
-      else {
-          scalar_IC += 0.5*(1.0-std::tanh((dist-radius1)/(1.0)));
-      }
+    // ---------------------------------------------------------------------
 
-      dist = 0.0;
-      for (unsigned int dir = 0; dir < dim; dir++){
-          dist += (p[dir]-center2[dir])*(p[dir]-center2[dir]);
-      }
-      dist = std::sqrt(dist);
-
-      // Initial condition for the concentration field
-      if (index == 0){
-          scalar_IC += 0.5*(0.125)*(1.0-std::tanh((dist-radius2)/(1.0)));
-      }
-      else {
-          scalar_IC += 0.5*(1.0-std::tanh((dist-radius2)/(1.0)));
-      }
-
-
-	  // --------------------------------------------------------------------------
 }
 
 // ===========================================================================

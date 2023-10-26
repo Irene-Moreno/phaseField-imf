@@ -15,11 +15,11 @@ void variableAttributeLoader::loadPostProcessorVariableAttributes(){}
 #endif
 
 // Header files for nucleation that may or may not exist
-#ifdef NUCLEATION_FILE_EXISTS
+// #ifdef NUCLEATION_FILE_EXISTS
 #include <random>
 #include <time.h>
 #include "nucleation.cc"
-#endif
+// #endif
 
 
 //main

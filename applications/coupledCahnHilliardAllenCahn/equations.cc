@@ -22,6 +22,9 @@ void variableAttributeLoader::loadVariableAttributes(){
     set_dependencies_value_term_RHS(0, "c");
     set_dependencies_gradient_term_RHS(0, "n,grad(c)");
 
+	set_allowed_to_nucleate			(0, false);
+	set_need_value_nucleation		(0, true);
+
     // Variable 1
 	set_variable_name				(1,"n");
 	set_variable_type				(1,SCALAR);
@@ -29,6 +32,9 @@ void variableAttributeLoader::loadVariableAttributes(){
 
     set_dependencies_value_term_RHS(1, "c,n");
     set_dependencies_gradient_term_RHS(1, "grad(n)");
+
+	set_allowed_to_nucleate			(1, true);
+	set_need_value_nucleation		(1, true);
 }
 
 // =============================================================================================
@@ -70,6 +76,14 @@ scalarvalueType fbcc = constV(10.0);
 scalarvalueType h = (10.0*n*n*n-15.0*n*n*n*n+6.0*n*n*n*n*n);
 scalarvalueType hn = (30.0*n*n-60.0*n*n*n+30.0*n*n*n*n);
 
+// -------------------------------------------------
+// Nucleation expressions
+// -------------------------------------------------
+dealii::VectorizedArray<double> source_term = constV(0.0);
+dealii::VectorizedArray<double> gamma = constV(1.0);
+seedNucleus(q_point_loc,source_term,gamma);
+// -------------------------------------------------
+
 // Residual equations
 scalargradType mux = ( cx*((1.0-h)*facc+h*fbcc) + nx*((fbc-fac)*hn) );
 scalarvalueType eq_c = c;
@@ -85,10 +99,53 @@ variable_list.set_scalar_value_term_RHS(0,eq_c);
 variable_list.set_scalar_gradient_term_RHS(0,eqx_c);
 
 // Terms for the equation to evolve the order parameter
-variable_list.set_scalar_value_term_RHS(1,eq_n);
+variable_list.set_scalar_value_term_RHS(1,eq_n+source_term);
 variable_list.set_scalar_gradient_term_RHS(1,eqx_n);
 
 }
+
+
+// =================================================================================
+// seedNucleus: a function particular to this app
+// =================================================================================
+template <int dim,int degree>
+void customPDE<dim,degree>::seedNucleus(const dealii::Point<dim, dealii::VectorizedArray<double> > & q_point_loc,
+	dealii::VectorizedArray<double> & source_term,
+	dealii::VectorizedArray<double> & gamma) const {
+
+		for (typename std::vector<nucleus<dim> >::const_iterator thisNucleus=this->nuclei.begin(); thisNucleus!=this->nuclei.end(); ++thisNucleus){
+			if (thisNucleus->seededTime + thisNucleus->seedingTime > this->currentTime){
+				// Calculate the weighted distance function to the order parameter freeze boundary (weighted_dist = 1.0 on that boundary)
+				dealii::VectorizedArray<double> weighted_dist = this->weightedDistanceFromNucleusCenter(thisNucleus->center, userInputs.get_nucleus_freeze_semiaxes(thisNucleus->orderParameterIndex), q_point_loc, thisNucleus->orderParameterIndex);
+
+				for (unsigned i=0; i<gamma.size();i++){
+					if (weighted_dist[i] <= 1.0){
+						gamma[i] = 0.0;
+
+						// Seed a nucleus if it was added to the list of nuclei this time step
+						if (thisNucleus->seedingTimestep == this->currentIncrement){
+							// Find the weighted distance to the outer edge of the nucleus and use it to calculate the order parameter source term
+							dealii::Point<dim,double> q_point_loc_element;
+							for (unsigned int j=0; j<dim; j++){
+								q_point_loc_element(j) = q_point_loc(j)[i];
+							}
+							double r = this->weightedDistanceFromNucleusCenter(thisNucleus->center, userInputs.get_nucleus_semiaxes(thisNucleus->orderParameterIndex), q_point_loc_element, thisNucleus->orderParameterIndex);
+
+							double avg_semiaxis = 0.0;
+							for (unsigned int j=0; j<dim; j++){
+								avg_semiaxis += thisNucleus->semiaxes[j];
+							}
+							avg_semiaxis /= dim;
+
+							source_term[i] =0.5*(1.0-std::tanh(avg_semiaxis*(r-1.0)/interface_coeff));
+
+						}
+					}
+				}
+			}
+		}
+	}
+
 
 // =============================================================================================
 // nonExplicitEquationRHS (needed only if one or more equation is time independent or auxiliary)
