@@ -1,12 +1,12 @@
 
 ##################################################################################
-# READ THE VTU SOLUTION FILES AND EXTRACT INFO FROM THEM
+# READ THE VTU SOLUTION FILES AND EXTRACT THE INDUCTION TIME
 ##################################################################################
 
 import meshio
 import re
 from os import listdir
-from os.path import isfile, join, splitext
+from os.path import isfile, join
 
 filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595'
 files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
@@ -64,4 +64,3 @@ params_fdir = filesdir + '/parameters.prm'
 timestep = get_timestep(params_fdir)
 
 induction_time = get_induction_time(ordered_filedirs, timestep)
-print(induction_time)#
