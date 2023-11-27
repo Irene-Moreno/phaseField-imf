@@ -1,9 +1,9 @@
 
 ##################################################################################
-# READ THE VTU SOLUTION FILES, PLOT THEM AND EXTRACT THE PHASE FRACTION
+# READ THE VTU SOLUTION FILES AND EXTRACT THE PHASE FRACTION
 ##################################################################################
 
-# The analysis of 24 files took about 1.3 min
+# The analysis of 24 files took about 40.6 seconds
 
 import re
 import meshio
@@ -16,7 +16,7 @@ import colormaps as cmaps
 from calculateInductionTime import get_sorted_list_of_files
 
 
-def readVTUForPseudocolor(filedir):
+def read_VTU_for_coords_and_data(filedir):
     # Grab the snapshot time for the image name
     time_pattern = r'(\d+)'
     time_f = int(re.search(time_pattern, filedir.split('/')[-1]).group())
@@ -30,24 +30,11 @@ def readVTUForPseudocolor(filedir):
     return x_f, y_f, v_f, block_f, time_f
 
 
-def plotPseudocolorPlot(ordered_filedirs_f, filesdir_f):
-    for fdir in ordered_filedirs_f:
-        x_f, y_f, v_f, block_f, time_f = readVTUForPseudocolor(filesdir_f + '/' + fdir)
-
-        triang = tri.Triangulation(x_f, y_f)
-        fig1, ax1 = plt.subplots()
-        ax1.set_aspect('equal')
-        tpc = ax1.tripcolor(triang, v_f, shading='gouraud', cmap=cmaps.berlin, vmin=0, vmax=1)
-        fig1.colorbar(tpc)
-        fig1.savefig(filesdir_f + '/' + f"snapshot-{time_f}.png", dpi=600)
-        plt.close(fig1)
-
-
 def calculatePhaseFraction(ordered_filedirs_f):
     times = []
     phase_fractions = []
     for fdir in ordered_filedirs_f:
-        x_f, y_f, v_f, block_f, time_f = readVTUForPseudocolor(filesdir + '/' + fdir)
+        x_f, y_f, v_f, block_f, time_f = read_VTU_for_coords_and_data(filesdir + '/' + fdir)
         times.append(time_f)
 
         n_area_f = 0
@@ -77,14 +64,14 @@ def calculatePhaseFraction(ordered_filedirs_f):
             elif x1 != x3:
                 width = abs(x1-x3)
             elif x1 != x4:
-                width = abs(x1-x3)
+                width = abs(x1-x4)
             
             if y1 != y2:
                 heigth = abs(y1-y2)
             elif y1 != y3:
                 heigth = abs(y1-y3)
             elif y1 != y4:
-                heigth = abs(y1-y3)
+                heigth = abs(y1-y4)
             
             if mv > 0.5:
                 n_area_f += width*heigth
@@ -102,7 +89,6 @@ filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC
 files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
 
 ordered_filedirs = get_sorted_list_of_files(files)
-plotPseudocolorPlot(ordered_filedirs, filesdir)
 phase_fracs, times = calculatePhaseFraction(ordered_filedirs)
 print(phase_fracs)
 
