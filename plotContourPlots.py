@@ -1,6 +1,6 @@
 
 ##################################################################################
-# READ THE VTU SOLUTION FILES AND GET THE PSD EVOLUTION WITH TIME
+# READ THE VTU SOLUTION FILES AND GET THE CONTOUR PLOTS FROM THEM
 ##################################################################################
 
 import meshio
