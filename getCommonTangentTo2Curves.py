@@ -14,10 +14,12 @@ def g(x):
     return 5*x**2 -9.9746*x +1.59744
 
 
-x1, x2 = fsolve(equations, (0.5, 1.0))
+x, infodict, ier, mesg = fsolve(equations, (0.54, 0.92), full_output = True)
 
-y1 = f(x1)
-y2 = g(x2)
+print(infodict)
 
-print((x1, y1))
-print((x2, y2))
+y1 = f(x[0])
+y2 = g(x[1])
+
+print((x[0], y1))
+print((x[1], y2))
