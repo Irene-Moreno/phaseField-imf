@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 import sys
+import time
 from visit import *
 
 #DeleteAllPlots()
 
+start_time = time.time()
+
 # Step 1: Open a database (the whole .vtu time series)
-dbname="solution-*.vtu database"
+dbname="/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595/solution-*.vtu database"
 OpenDatabase(dbname)
 
 # Step 2: Add plots (using variable "n")
@@ -68,3 +71,5 @@ DeleteAllPlots()
 CloseDatabase(dbname)
 
 sys.exit()
+
+print("--- %s seconds ---" % (time.time() - start_time))
