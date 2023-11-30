@@ -58,9 +58,12 @@ def get_induction_time(ordered_filedirs_f, timestep_f):
     return induction_time_f
 
 
-ordered_filedirs = get_sorted_list_of_files(files)
 
-params_fdir = filesdir + '/parameters.prm'
-timestep = get_timestep(params_fdir)
+if __name__ == '__main__':
 
-induction_time = get_induction_time(ordered_filedirs, timestep)
+    ordered_filedirs = get_sorted_list_of_files(files)
+
+    params_fdir = filesdir + '/parameters.prm'
+    timestep = get_timestep(params_fdir)
+
+    induction_time = get_induction_time(ordered_filedirs, timestep)
