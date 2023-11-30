@@ -5,7 +5,10 @@
 
 # The analysis of 24 files took about 40.6 seconds
 
+start_time = time.time()
+
 import re
+import time
 import meshio
 import numpy as np
 from os import listdir
@@ -85,13 +88,17 @@ def calculatePhaseFraction(ordered_filedirs_f):
     return phase_fractions, times
 
 
-filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595'
-files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
 
-ordered_filedirs = get_sorted_list_of_files(files)
-phase_fracs, times = calculatePhaseFraction(ordered_filedirs)
-print(phase_fracs)
+if __name__ == '__main__':
 
+    filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595'
+    files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
+
+    ordered_filedirs = get_sorted_list_of_files(files)
+    phase_fracs, times = calculatePhaseFraction(ordered_filedirs)
+    print(phase_fracs)
+
+print("--- %s seconds ---" % (time.time() - start_time))
 
 # The list of coordinates stored in points contains the list of cell nodes used to create the grid in the same order
 # that the cells_dict contains, and that the scalar fields (such as n or c) are stored as. Hence, iterating through
