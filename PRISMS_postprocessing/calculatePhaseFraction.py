@@ -5,8 +5,6 @@
 
 # The analysis of 24 files took about 40.6 seconds
 
-start_time = time.time()
-
 import re
 import time
 import meshio
@@ -18,6 +16,7 @@ import matplotlib.tri as tri
 import colormaps as cmaps
 from calculateInductionTime import get_sorted_list_of_files
 
+start_time = time.time()
 
 def read_VTU_for_coords_and_data(filedir):
     # Grab the snapshot time for the image name
