@@ -14,7 +14,7 @@ import colormaps as cmaps
 from calculateInductionTime import get_sorted_list_of_files
 from calculatePhaseFraction import read_VTU_for_coords_and_data
 
-start_time = time.time()
+# start_time = time.time()
 
 def plotContourPlot(ordered_filedirs_f, filesdir_f):
     for fdir in ordered_filedirs_f:
@@ -25,13 +25,16 @@ def plotContourPlot(ordered_filedirs_f, filesdir_f):
         ax1.set_aspect('equal')
         tpc = ax1.tricontourf(triang, v_f, cmap=cmaps.berlin, vmin=0, vmax=1)
         fig1.colorbar(tpc)
-        fig1.savefig(filesdir_f + '/' + f"contourplot-{time_f}.png", dpi=300)
+        fig1.savefig(filesdir_f + '/' + f"contourplot-{time_f}.png", dpi=500)
         plt.close(fig1)
 
-filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595'
-files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
 
-ordered_filedirs = get_sorted_list_of_files(files)
-plotContourPlot(ordered_filedirs, filesdir)
+if __name__ == '__main__':
 
-print("--- %s seconds ---" % (time.time() - start_time))
+    filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595'
+    files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
+
+    ordered_filedirs = get_sorted_list_of_files(files)
+    plotContourPlot(ordered_filedirs, filesdir)
+
+# print("--- %s seconds ---" % (time.time() - start_time))
