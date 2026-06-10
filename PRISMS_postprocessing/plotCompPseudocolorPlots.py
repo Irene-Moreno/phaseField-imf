@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 import matplotlib.tri as tri
 import colormaps as cmaps
 from calculateInductionTime import get_sorted_list_of_files
-from calculatePhaseFraction import read_VTU_for_coords_and_data
+from calculateComposition import read_VTU_for_coords_and_data_comp
 
 start_time = time.time()
 mpl.rcParams['savefig.pad_inches'] = 0
@@ -25,11 +25,11 @@ def plotPseudocolorPlot(ordered_filedirs_f, filesdir_f, binary, savepscplots):
     if binary == True:
         cmap = 'binary_r'
     else:
-        cmap = cmaps.berlin
+        cmap = cmaps.tofino
 
     raw_img_f = []; times_f = []
     for fdir in ordered_filedirs_f:
-        x_f, y_f, v_f, block_f, time_f = read_VTU_for_coords_and_data(filesdir_f + '/' + fdir)
+        x_f, y_f, v_f, block_f, time_f = read_VTU_for_coords_and_data_comp(filesdir_f + '/' + fdir)
         times_f.append(time_f)
 
         triang = tri.Triangulation(x_f, y_f)
@@ -45,7 +45,7 @@ def plotPseudocolorPlot(ordered_filedirs_f, filesdir_f, binary, savepscplots):
         if savepscplots == True and binary == False:
             ax1.set_ylabel('Y axis')
             ax1.set_xlabel('X axis')
-            fig1.savefig(filesdir_f + '/' + f"snapshot-{time_f}_order.png", bbox_inches='tight', transparent="True", pad_inches=0, dpi=500)
+            fig1.savefig(filesdir_f + '/' + f"snapshot-{time_f}_comp.png", bbox_inches='tight', transparent="True", pad_inches=0, dpi=500)
         elif binary == True:
             ax1.set_axis_off()
             cbar.remove()
@@ -61,7 +61,7 @@ def plotPseudocolorPlot(ordered_filedirs_f, filesdir_f, binary, savepscplots):
 
 if __name__ == '__main__':
 
-    filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/KKS_nucleation/2024-10-13 16-28-14.870170'
+    filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/KKS_nucleation/2024-10-11 18-31-29.833413'
     files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
 
     ordered_filedirs = get_sorted_list_of_files(files)

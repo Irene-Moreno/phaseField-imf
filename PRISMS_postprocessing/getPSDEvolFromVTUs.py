@@ -19,7 +19,7 @@ from viridis import generate_viridis_colors
 
 ############ (1): GETTING THE RAW IMAGE DATA FOR THE BINARY IMAGE
 
-filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/coupledCHAC/2023-11-20 16-08-08.978595'
+filesdir = '/home/imoreno/eng_idrive/ChemEngUsers/bwb20181/Documents/KKS_nucleation/2024-10-08 20-09-12.973002'
 files = [f for f in listdir(filesdir) if isfile(join(filesdir, f)) and f.endswith('.vtu')]
 
 ordered_filedirs = get_sorted_list_of_files(files)
@@ -56,7 +56,7 @@ plt.savefig('Median evolution.png')
 result = linregress(img_times, median_evol)
 
 
-################### PSD EVOLUTION
+################### (2): PSD EVOLUTION
 # Get the bins distribution
 flattened_diams = [value for sublist in diameters.values() for value in sublist]
 max_diam = max(flattened_diams)
